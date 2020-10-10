@@ -28,6 +28,7 @@
 ## Project was created in Visual Studio Code using PlatformIO
   Dependacies:  
   - Adafruit SSD1306 - https://github.com/adafruit/Adafruit_SSD1306
+  - Adafruit GFX Library - https://github.com/adafruit/Adafruit-GFX-Library
   - Adafruit BusIO - https://github.com/adafruit/Adafruit_BusIO
   - PID by Br3ttb - https://github.com/br3ttb/Arduino-PID-Library
   
