@@ -1,3 +1,10 @@
+#include <SPI.h>
+#include <Wire.h>
+#include <splash.h>
+#include <Adafruit_SSD1306.h>
+#include "Defines.h"
+#include "Logo.h"
+#include "Temperature.h"
 #include "OLED.h"
 
 int dropCycle = 0;
