@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <PID_v1.h>
 #include "Defines.h"
-#include "Temperature.h"
 
 // internal variables
 int tempCurrentVal = 0;

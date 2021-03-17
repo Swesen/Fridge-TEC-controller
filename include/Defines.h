@@ -1,12 +1,15 @@
+#ifndef __DEFINES_H__
+#define __DEFINES_H__
+
 /*--------------------
    Pin Configuration
   --------------------
 */
-#define FANSENS 2                 // D2 = FAN SENS
-#define FANPWM 3                  // D3 = FAN PWM
+#define FANSENS 2                 // D2 = FAN RPM output
+#define FANPWM 3                  // D3 = FAN PWM input
 #define NEGBTNPIN 5               // D5 = BUTTON -
 #define POSBTNPIN 7               // D7 = BUTTON +
-#define MOSPIN 9                  // D9 = MOSFET
+#define MOSPIN 9                  // D9 = gate of MOSFET
 
 #define TEMPPIN A1                // A1 = TEMP SENS
 
@@ -38,10 +41,12 @@
 #define THERMISTORNOMINAL 10000   // resistance at 25 degrees C
 #define TEMPERATURENOMINAL 25     // temp. for nominal resistance (almost always 25 C)
 #define BCOEFFICIENT 3950         // The beta coefficient of the thermistor (usually 3000-4000)
-#define OFFSETTEMP -4             // Offset temperature
+#define OFFSETTEMP 0             // Offset temperature
 
 #define FANSENSTIMEOUT 150000     // Fan timeout in micro seconds
 
 #define ROMPWM 0                  // PWM EEPROM address
 #define ROMTEMP 8 // setTemp EEPROM address
 #define EEPROMWRITE 10
+
+#endif // __DEFINES_H__

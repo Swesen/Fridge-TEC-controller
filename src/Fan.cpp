@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "Defines.h"
-#include "Fan.h"
 
 // external variables
 extern byte PWM;

@@ -2,24 +2,14 @@
 #include <Wire.h>
 #include <splash.h>
 #include <Adafruit_SSD1306.h>
+#include "OLED.h"
 #include "Defines.h"
 #include "Logo.h"
-#include "Temperature.h"
-#include "OLED.h"
-
-int dropCycle = 0;
-
-// external variables
-extern float temp, setTemp;
-extern byte PWM;
-extern int Mode, defrostTimer, fanSpeed;
-extern bool dimOLED;
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-void startOLED()
+OLED::OLED(String bootText)
 {
-    String bootText = BOOTSCREENTEXT;
     display.begin(SSD1306_SWITCHCAPVCC, OLEDADDRESS);
 
     display.clearDisplay();
@@ -35,117 +25,122 @@ void startOLED()
     display.clearDisplay();
 }
 
-// Information mode
-void drawPage1()
+void OLED::update(unsigned char mode, bool dimOLED, char currentTemperature, char setTemperature, int fanSpeed, unsigned char fanPWM, int defrostTimer)
+{
+    int tempSize = 1;
+    bool tempSelected = false;
+    bool fanSelected = false;
+    bool defrosting = false;
+
+    // get ready to update oled with new info
+    display.dim(dimOLED);
+    display.clearDisplay();
+    display.setCursor(0, 0);
+
+    // check which mode to show on the oled
+    switch (mode)
+    {
+    case 0: // turn off display
+        break;
+    case 1: // Information mode
+        tempSize = 3;
+        break;
+    case 2: // set target temperature mode
+        tempSelected = true;
+        break;
+    case 3: // set fan speed mode
+        fanSelected = true;
+        break;
+    case 4: // defrost mode
+        tempSize = 2;
+
+        defrosting = true;
+        break;
+    default:
+        break;
+    }
+
+    printCurrentTemp(currentTemperature, tempSize);
+
+    printSetTemp(setTemperature, tempSelected);
+
+    printFanInfo(fanSpeed, fanPWM, fanSelected);
+
+    if (defrosting)
+    {
+        printDefrostInfo(defrostTimer);
+    }
+    else
+    {
+        printMosStatus();
+    }
+
+    // display button info on screen for modes with settings
+    if (mode > 0)
+    {
+        display.setCursor(0, SCREEN_HEIGHT - 7 * 2);
+        display.setTextColor(0, 1);
+        display.setTextSize(2);
+        display.print(" - ");
+        display.setCursor(SCREEN_WIDTH - 18 * 2, SCREEN_HEIGHT - 7 * 2);
+        display.print(" + ");
+    }
+
+    display.display();
+}
+
+void OLED::printCurrentTemp(char currentTemperature, char textSize)
 {
     display.setTextColor(1);
-    display.setTextSize(3);
-    display.print(temp, 1);
+    display.setTextSize(textSize);
+    display.print(currentTemperature, 1);
     display.print((char)247);
     display.println("C");
+}
+
+void OLED::printSetTemp(char setTemperature, bool selected)
+{
+    if (selected)
+    {
+        display.setTextColor(0, 1);
+    }
 
     display.setTextSize(2);
     display.print("Set:");
-    display.print(setTemp, 1);
+    display.print(setTemperature, 1);
     display.print((char)247);
     display.println("C");
+}
 
+void OLED::printFanInfo(int fanSpeed, unsigned char fanPWM, bool selected)
+{
+    display.setTextColor(1);
     display.setTextSize(1);
     display.print("Fan:");
     display.print(fanSpeed);
+
+    if (selected)
+    {
+        display.setTextColor(0, 1);
+        display.setTextSize(2);
+    }
     display.print("RPM  ");
-    display.print(PWM);
+    display.print(fanPWM);
     display.println("%");
+}
 
+void OLED::printMosStatus()
+{
+    display.setTextColor(1);
+    display.setTextSize(1);
     display.print("Mos:");
     display.print(OCR1A);
 }
 
-// set target temp mode
-void drawPage2()
+void OLED::printDefrostInfo(int defrostTimer)
 {
-    display.setTextColor(1);
-    display.setTextSize(1);
-    display.print(temp, 1);
-    display.print((char)247);
-    display.println("C");
-
-    display.setTextColor(0, 1);
-    display.setTextSize(2);
-    display.print("Set:");
-    display.print(setTemp, 1);
-    display.print((char)247);
-    display.println("C");
-
-    display.setTextColor(1);
-    display.setTextSize(1);
-    display.print("Fan:");
-    display.print(fanSpeed);
-    display.print("RPM  ");
-    display.print(PWM);
-    display.println("%");
-
-    display.print("Mos:");
-    display.print(OCR1A);
-}
-
-// set fan speed mode
-void drawPage3()
-{
-    display.setTextColor(1);
-    display.setTextSize(1);
-    display.print(temp, 1);
-    display.print((char)247);
-    display.println("C");
-
-    display.setTextColor(1);
-    display.setTextSize(1);
-    display.print("Set:");
-    display.print(setTemp, 1);
-    display.print((char)247);
-    display.print("C ");
-    display.print("Fan:");
-    display.print(fanSpeed);
-    display.println("RPM");
-
-    display.setTextColor(0, 1);
-    display.setTextSize(2);
-    display.print("Fan:");
-    display.print(PWM);
-    display.println("%");
-
-    display.setTextColor(1);
-    display.setTextSize(1);
-    display.print("Mos:");
-    display.print(OCR1A);
-
-}
-
-// Defrost mode
-void drawPage4()
-{
-    display.setTextColor(1);
-    display.setTextSize(2);
-    display.print(temp, 1);
-    display.print((char)247);
-    display.println("C");
-
-    display.setTextSize(1);
-    display.print("Set:");
-    display.print(setTemp, 1);
-    display.print((char)247);
-    display.println("C");
-
-    display.setTextSize(1);
-    display.print("Fan:");
-    display.print(fanSpeed);
-    display.print("RPM ");
-    display.print(PWM);
-    display.println("%");
-
-
     display.print("Defrost:");
-    display.print(int(defrostTimer));
+    display.print(defrostTimer);
     display.print("min");
 
     // animate melting snowflake
@@ -171,46 +166,4 @@ void drawPage4()
     default:
         break;
     }
-}
-
-void updateOLED()
-{
-    // get ready to update oled with new info
-    display.dim(dimOLED);
-    display.clearDisplay();
-    display.setCursor(0, 0);
-
-    // check which mode to show on the oled
-    switch (Mode)
-    {
-    case -1:    // turn off display
-        break;
-    case 0:     // Information mode
-        drawPage1();
-        break;
-    case 1:     // set target temp mode
-        drawPage2();
-        break;
-    case 2:     // set fan speed mode
-        drawPage3();
-        break;
-    case 3:     // defrost mode
-        drawPage4();
-        break;
-    default:
-        break;
-    }
-
-    // display button info on screen for modes with settings
-    if (Mode > 0)
-    {
-        display.setCursor(0, SCREEN_HEIGHT - 7 * 2);
-        display.setTextColor(0, 1);
-        display.setTextSize(2);
-        display.print(" - ");
-        display.setCursor(SCREEN_WIDTH - 18 * 2, SCREEN_HEIGHT - 7 * 2);
-        display.print(" + ");
-    }
-
-    display.display();
 }
