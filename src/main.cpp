@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include "Defines.h"
+#include "Buttons.h"
+#include "OLED.h"
 
 /*-----------
    Variables

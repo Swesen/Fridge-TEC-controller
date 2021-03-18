@@ -1,36 +1,41 @@
 #include <Arduino.h>
-#include "Defines.h"
+#include "Fan.h"
 
-// external variables
-extern byte PWM;
-extern int fanSpeed;
+Fan::Fan(char fanSensPin, char fanPWMPin, unsigned long fanSensTimeOut)
+{
+    this->fanSensPin = fanSensPin;
+    this->fanPWMPin = fanPWMPin;
+    this->fanSensTimeOut = fanSensTimeOut;
 
-void fanSetup()
-{   
-    // The timer configuration was complex so I found this code snippet on some forum
-    // generate 25kHz PWM pulse rate on Pin 3
-    pinMode(FANPWM, OUTPUT);                               // OCR2B sets duty cycle
-    TCCR2A = 0;                                            // TC2 Control Register A
-    TCCR2B = 0;                                            // TC2 Control Register B
-    TIMSK2 = 0;                                            // TC2 Interrupt Mask Register
-    TIFR2 = 0;                                             // TC2 Interrupt Flag Register
-    TCCR2A |= (1 << COM2B1) | (1 << WGM21) | (1 << WGM20); // OC2B cleared/set on match when up/down counting, fast PWM
-    TCCR2B |= (1 << WGM22) | (1 << CS21);                  // prescaler 8
-    OCR2A = 79;                                            // TOP overflow value (Hz)
+    pinMode(fanPWMPin, OUTPUT);
+    pinMode(fanSensPin, INPUT_PULLUP);
+    setupTimer2();
+}
+
+int Fan::getFanRPM()
+{
+    return 1000000 * 60 / pulseIn(fanSensPin, HIGH, fanSensTimeOut) * 4;
+}
+
+void Fan::setFanSpeed(unsigned char percent) 
+{
+    // convert percentage to PWM timer equivilent
+    OCR2B = (unsigned char)(round((percent / 100.0) * 79));
+}
+
+void Fan::setupTimer2()
+{
+    // clear timer 2
+    TCCR2A = 0;
+    TCCR2B = 0;
+    TIMSK2 = 0;
+    TIFR2 = 0;
+    // set timer 2 to fast PWM, non-inverted mode
+    TCCR2A |= (1 << COM2B1) | (1 << WGM21) | (1 << WGM20);
+    // set reversed fast PWM mode, prescaler clock 16M / 8 = 2M
+    TCCR2B |= (1 << WGM22) | (1 << CS21);
+    // 2M / 80 = 25kHz
+    OCR2A = 79;
+    // OCR2A / OCR2B = PWM%
     OCR2B = 10;
-    pinMode(FANSENS, INPUT_PULLUP); // Starts reading
-}
-
-void setFanSpeed()
-{
-    // convert user set fan percentage to PWM timer number
-    int val = round((PWM / 100.0) * 79);
-    OCR2B = val;
-}
-
-void getFanRPM()
-{
-    // use the time between fan pulses to get RPM
-    unsigned long time = pulseIn(FANSENS, HIGH, FANSENSTIMEOUT);
-    fanSpeed = (1000000 * 60) / (time * 4);
 }

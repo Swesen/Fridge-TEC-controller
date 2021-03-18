@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "buttons.h"
+#include "Buttons.h"
 
 Buttons::Buttons(char negButtonPin, char posButtonPin, int debounceTime, int holdThreashold)
 {
