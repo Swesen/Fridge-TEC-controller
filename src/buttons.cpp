@@ -25,10 +25,10 @@ void Buttons::setupButtons(char negButtonPin, char posButtonPin)
     pinMode(buttonPin[posButton], INPUT_PULLUP);
 }
 
-unsigned char Buttons::getStatus(unsigned long currentMillis)
+byte Buttons::getStatus(unsigned long currentMillis)
 {   
     // reset timer if counter has reset
-    for (unsigned char i = 0; i < 2; i++)
+    for (byte i = 0; i < 2; i++)
     {
         if (currentMillis < lastDebounceTime[i])
         {
@@ -41,18 +41,18 @@ unsigned char Buttons::getStatus(unsigned long currentMillis)
     readButton(posButton, currentMillis);
 
     // check to see if any button is pressed
-    if (!buttonState[negButton] || !buttonState[posButton])
+    if (!lastButtonState[negButton] || !lastButtonState[posButton])
     {
-        if (!buttonState[negButton] && !buttonState[posButton])
+        if (!lastButtonState[negButton] && !lastButtonState[posButton])
         {   
             // both buttons pressed
             return 3;
-        }else if (!buttonState[posButton])
+        }else if (!lastButtonState[posButton])
         {
             // positive button pressed
             return 2;
         }
-        else if (!buttonState[negButton])
+        else if (!lastButtonState[negButton])
         {
             // negative button pressed
             return 1;

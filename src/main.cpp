@@ -12,7 +12,7 @@
 unsigned long lastMillis = 0;
 int Mode = 0, defrostTimer = 15;
 float targetTemperature = 10;
-unsigned char fanPWM = 0;
+byte fanPWM = 0;
 bool writeROM = false, dimOLED = false;
 
 // Objects

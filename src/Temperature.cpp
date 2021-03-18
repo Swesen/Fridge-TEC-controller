@@ -5,7 +5,7 @@
 // internal variables
 
 
-Temperature::Temperature(char thermistorPin, unsigned char smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient) 
+Temperature::Temperature(char thermistorPin, byte smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient) 
 {
     this->thermistorPin = thermistorPin;
     this->smoothing = smoothing;

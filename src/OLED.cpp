@@ -25,7 +25,7 @@ OLED::OLED(String bootText)
     display.clearDisplay();
 }
 
-void OLED::update(unsigned char mode, bool dimOLED, char currentTemperature, char setTemperature, int fanSpeed, unsigned char fanPWM, int defrostTimer)
+void OLED::update(byte mode, bool dimOLED, char currentTemperature, char setTemperature, int fanSpeed, byte fanPWM, int defrostTimer)
 {
     int tempSize = 1;
     bool tempSelected = false;
@@ -112,7 +112,7 @@ void OLED::printSetTemp(char setTemperature, bool selected)
     display.println("C");
 }
 
-void OLED::printFanInfo(int fanSpeed, unsigned char fanPWM, bool selected)
+void OLED::printFanInfo(int fanSpeed, byte fanPWM, bool selected)
 {
     display.setTextColor(1);
     display.setTextSize(1);

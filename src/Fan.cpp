@@ -21,7 +21,7 @@ int Fan::getFanRPM()
 void Fan::setFanSpeed(float percent) 
 {
     // convert percentage to PWM timer equivilent
-    OCR2B = (unsigned char)(79 / percent + 0.5);
+    OCR2B = (byte)(79 / percent + 0.5);
 }
 
 void Fan::setupTimer2()

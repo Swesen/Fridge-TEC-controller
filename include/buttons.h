@@ -20,7 +20,7 @@ public:
     Buttons(char negButtonPin, char posButtonPin, int debounceTime);
     Buttons(char negButtonPin, char posButtonPin);
 
-    unsigned char getStatus(unsigned long currentMillis);
+    byte getStatus(unsigned long currentMillis);
 };
 
 #endif // __BUTTONS_H__

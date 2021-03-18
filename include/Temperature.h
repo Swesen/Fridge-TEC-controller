@@ -7,7 +7,7 @@ private:
     char thermistorPin;
     int currentIndex = 0;
     int *samples;
-    unsigned char smoothing;
+    byte smoothing;
 
     // the resistor used as a divider
     unsigned int resistorValue;
@@ -19,7 +19,7 @@ private:
     int betaCoefficient;
 
 public:
-    Temperature(char thermistorPin, unsigned char smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient);
+    Temperature(char thermistorPin, byte smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient);
     ~Temperature();
 
     char getTemperature();
