@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "Buttons.h"
 
-Buttons::Buttons(char negButtonPin, char posButtonPin, int debounceTime, int holdThreashold)
+Buttons::Buttons(char negButtonPin, char posButtonPin, int debounceTime)
 {
     // time in milliseconds that the button needs to be in a new state to change virtual state
     this->debounceTime = debounceTime;
@@ -26,7 +26,17 @@ void Buttons::setupButtons(char negButtonPin, char posButtonPin)
 }
 
 unsigned char Buttons::getStatus(unsigned long currentMillis)
-{
+{   
+    // reset timer if counter has reset
+    for (unsigned char i = 0; i < 2; i++)
+    {
+        if (currentMillis < lastDebounceTime[i])
+        {
+                lastDebounceTime[i] = currentMillis;
+        }
+        
+    }
+    
     readButton(negButton, currentMillis);
     readButton(posButton, currentMillis);
 

@@ -1,7 +1,7 @@
 #ifndef __OLED_H__
 #define __OLED_H__
 
-#include <Arduino.h>
+#include <String.h>
 
 class OLED
 {

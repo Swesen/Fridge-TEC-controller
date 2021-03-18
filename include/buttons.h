@@ -17,7 +17,7 @@ private:
     void setupButtons(char negButtonPin, char posButtonPin);
     void readButton(byte buttonIndex, unsigned long currentMillis);
 public:
-    Buttons(char negButtonPin, char posButtonPin, int debounceTime, int holdThreashold);
+    Buttons(char negButtonPin, char posButtonPin, int debounceTime);
     Buttons(char negButtonPin, char posButtonPin);
 
     unsigned char getStatus(unsigned long currentMillis);

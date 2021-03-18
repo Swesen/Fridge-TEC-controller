@@ -14,13 +14,14 @@ Fan::Fan(char fanSensPin, char fanPWMPin, unsigned long fanSensTimeOut)
 
 int Fan::getFanRPM()
 {
+    // convert the time between signal pulses to RPM
     return 1000000 * 60 / pulseIn(fanSensPin, HIGH, fanSensTimeOut) * 4;
 }
 
-void Fan::setFanSpeed(unsigned char percent) 
+void Fan::setFanSpeed(float percent) 
 {
     // convert percentage to PWM timer equivilent
-    OCR2B = (unsigned char)(round((percent / 100.0) * 79));
+    OCR2B = (unsigned char)(79 / percent + 0.5);
 }
 
 void Fan::setupTimer2()
