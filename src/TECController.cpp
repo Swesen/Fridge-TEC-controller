@@ -19,8 +19,9 @@ TECController::TECController(char mosFetPin)
     OCR1A = 254;
 }
 
-void TECController::updatePWM(float percent) 
+
+void TECController::setPWM(float percentage)
 {
     // convert percentage to PWM equivilent
-    OCR1A = (byte)(254/percent + 0.5);
+    OCR1A = (byte)(254 / percentage + 0.5);
 }

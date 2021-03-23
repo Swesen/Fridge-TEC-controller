@@ -8,7 +8,8 @@ private:
 public:
     // mosFetPin needs to be D9
     TECController(char mosFetPin);
-    void updatePWM(float percent);
+
+    void setPWM(float percentage);
 };
 
 #endif // __TECCONTROLLER_H__

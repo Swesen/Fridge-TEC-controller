@@ -21,11 +21,11 @@ OLED::OLED(String bootText)
     display.setCursor(SCREEN_WIDTH / 2 - (bootText.length() * 6) / 2, 44);
     display.print(bootText);
     display.display();
-    delay(5000);
+    delay(2000);
     display.clearDisplay();
 }
 
-void OLED::update(byte mode, bool dimOLED, char currentTemperature, char setTemperature, int fanSpeed, byte fanPWM, int defrostTimer)
+void OLED::update(Mode mode, bool dimOLED, char currentTemperature, char setTemperature, int fanSpeed, byte fanPWM, int defrostTimer)
 {
     int tempSize = 1;
     bool tempSelected = false;
@@ -40,22 +40,23 @@ void OLED::update(byte mode, bool dimOLED, char currentTemperature, char setTemp
     // check which mode to show on the oled
     switch (mode)
     {
-    case 0: // turn off display
-        break;
-    case 1: // Information mode
+    case Information:
         tempSize = 3;
         break;
-    case 2: // set target temperature mode
+
+    case SetTagetTemp:
         tempSelected = true;
         break;
-    case 3: // set fan speed mode
+
+    case SetFanSpeed:
         fanSelected = true;
         break;
-    case 4: // defrost mode
-        tempSize = 2;
 
+    case Defrost:
+        tempSize = 2;
         defrosting = true;
         break;
+
     default:
         break;
     }
@@ -135,6 +136,7 @@ void OLED::printMosStatus()
     display.setTextSize(1);
     display.print("Mos:");
     display.print(OCR1A);
+    display.println("%");
 }
 
 void OLED::printDefrostInfo(int defrostTimer)

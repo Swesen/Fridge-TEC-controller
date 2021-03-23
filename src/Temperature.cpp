@@ -4,8 +4,7 @@
 
 // internal variables
 
-
-Temperature::Temperature(char thermistorPin, byte smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient) 
+Temperature::Temperature(char thermistorPin, byte smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient)
 {
     this->thermistorPin = thermistorPin;
     this->smoothing = smoothing;
@@ -20,12 +19,12 @@ Temperature::Temperature(char thermistorPin, byte smoothing, unsigned int resist
     pinMode(thermistorPin, INPUT);
 }
 
-Temperature::~Temperature() 
+Temperature::~Temperature()
 {
     free(samples);
 }
 
-char Temperature::getTemperature() 
+float Temperature::getTemperature()
 {
     // tage a new reading and add to samples
     samples[currentIndex] = analogRead(thermistorPin);
@@ -52,7 +51,5 @@ char Temperature::getTemperature()
     average = resistorValue / (1024 / average + 1);
 
     // convert the readings into celsius
-    return 1.0 /(log(average / nominalThermistorResistance) / betaCoefficient + (1.0 / (nominalTemperature + 273.15))) - 273.15;
+    return 1.0 / (log(average / nominalThermistorResistance) / betaCoefficient + (1.0 / (nominalTemperature + 273.15))) - 273.15;
 }
-
-

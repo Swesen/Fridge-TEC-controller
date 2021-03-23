@@ -2,11 +2,12 @@
 #define __OLED_H__
 
 #include <String.h>
+#include "main.h"
 
 class OLED
 {
 private:
-    int dropCycle;
+    int dropCycle = 0;
 
     void printCurrentTemp(char currentTemperature, char textSize);
     void printSetTemp(char setTemperature, bool selected);
@@ -15,11 +16,10 @@ private:
     void printDefrostInfo(int defrostTimer);
 
 public:
-    byte mode;
 
     OLED(String bootText);
 
-    void update(byte mode, bool dimOLED, char currentTemperature, char setTemperature, int fanSpeed, byte fanPWM, int defrostTimer);
+    void update(Mode mode, bool dimOLED, char currentTemperature, char setTemperature, int fanSpeed, byte fanPWM, int defrostTimer);
 };
 
 #endif // __TEC_OLED_H__

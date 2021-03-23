@@ -46,20 +46,20 @@ byte Buttons::getStatus(unsigned long currentMillis)
         if (!lastButtonState[negButton] && !lastButtonState[posButton])
         {   
             // both buttons pressed
-            return 3;
+            return both;
         }else if (!lastButtonState[posButton])
         {
             // positive button pressed
-            return 2;
+            return positive;
         }
         else if (!lastButtonState[negButton])
         {
             // negative button pressed
-            return 1;
+            return negative;
         }
     }
     // no button pressed
-    return 0;
+    return none;
 }
 
 void Buttons::readButton(byte buttonIndex, unsigned long currentMillis)
