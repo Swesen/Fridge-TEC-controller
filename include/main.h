@@ -17,22 +17,21 @@ enum Timer
     ButtonStateTimer,
     SettingChangeTimer,
     DefrostTimer,
-    EEPROMTimer,
     AmountOfTimers
 };
 
 void loadEEPROMValues();
 
-void saveEEPROMValues(unsigned long currentMillis);
+void saveEEPROMValues();
 
-int8_t readButtons(unsigned long currentMillis);
+int8_t readButtons();
 
-void changeSettings(int8_t changeCurrentSetting, unsigned long currentMillis);
+void changeSettings(int8_t changeCurrentSetting);
 
-void setScreenLightMode(unsigned long currentMillis);
+void setScreenLightMode();
 
-void update(unsigned long currentMillis);
+void update();
 
-void resetTimers(unsigned long currentMillis);
+void resetTimers();
 
 #endif // __MAIN_H__

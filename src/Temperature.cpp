@@ -16,12 +16,17 @@ Temperature::Temperature(char thermistorPin, byte smoothing, unsigned int resist
     // allocate memory for multiple samples
     samples = (int *)calloc(smoothing, sizeof(int));
 
-    pinMode(thermistorPin, INPUT);
+
 }
 
 Temperature::~Temperature()
 {
     free(samples);
+}
+
+void Temperature::start() 
+{
+        pinMode(thermistorPin, INPUT);
 }
 
 float Temperature::getTemperature()

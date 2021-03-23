@@ -12,7 +12,8 @@
     public:
         // fanSensPin needs to be D2, fanPWMPin needs to be D3
         Fan(char fanSensPin, char fanPWMPin, unsigned long fanSensTimeOut);
-
+        
+        void start();
         int getFanRPM();
         void setFanSpeed(float percent);
     };

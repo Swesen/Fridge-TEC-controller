@@ -1,20 +1,18 @@
-#include <SPI.h>
-#include <Wire.h>
-#include <splash.h>
-#include <Adafruit_SSD1306.h>
+
 #include "OLED.h"
 #include "Defines.h"
 #include "Logo.h"
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+OLED::OLED(uint8_t w, uint8_t h, TwoWire *twi, int8_t rst_pin) : display(w, h, twi, rst_pin) {}
 
-OLED::OLED(String bootText)
+void OLED::start(String bootText)
 {
+
     display.begin(SSD1306_SWITCHCAPVCC, OLEDADDRESS);
 
     display.clearDisplay();
     display.display();
-
+    delay(500);
     display.drawBitmap(SCREEN_WIDTH / 2 - 20, SCREEN_HEIGHT / 2 - 28, snowflake, 40, 40, 1);
     display.setTextColor(1);
     display.setTextSize(1);
@@ -25,7 +23,7 @@ OLED::OLED(String bootText)
     display.clearDisplay();
 }
 
-void OLED::update(Mode mode, bool dimOLED, char currentTemperature, char setTemperature, int fanSpeed, byte fanPWM, int defrostTimer)
+void OLED::update(Mode mode, bool dimOLED, char currentTemperature, char setTemperature, int *fanSpeed, byte fanPWM, byte defrostTimer)
 {
     int tempSize = 1;
     bool tempSelected = false;
@@ -90,6 +88,20 @@ void OLED::update(Mode mode, bool dimOLED, char currentTemperature, char setTemp
     display.display();
 }
 
+void OLED::print(String text)
+{
+    display.setTextColor(1);
+    display.setTextSize(1);
+    display.println(text);
+    display.display();
+}
+
+void OLED::clear()
+{
+    display.clearDisplay();
+    display.setCursor(0, 0);
+}
+
 void OLED::printCurrentTemp(char currentTemperature, char textSize)
 {
     display.setTextColor(1);
@@ -113,12 +125,12 @@ void OLED::printSetTemp(char setTemperature, bool selected)
     display.println("C");
 }
 
-void OLED::printFanInfo(int fanSpeed, byte fanPWM, bool selected)
+void OLED::printFanInfo(int *fanSpeed, byte fanPWM, bool selected)
 {
     display.setTextColor(1);
     display.setTextSize(1);
     display.print("Fan:");
-    display.print(fanSpeed);
+    display.print(int(*fanSpeed));
 
     if (selected)
     {
@@ -139,10 +151,10 @@ void OLED::printMosStatus()
     display.println("%");
 }
 
-void OLED::printDefrostInfo(int defrostTimer)
+void OLED::printDefrostInfo(byte defrostTimer)
 {
     display.print("Defrost:");
-    display.print(defrostTimer);
+    display.print(int(defrostTimer));
     display.print("min");
 
     // animate melting snowflake

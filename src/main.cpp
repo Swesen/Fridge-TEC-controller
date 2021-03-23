@@ -11,18 +11,18 @@
 
 // Variables
 Mode mode = Information;
+unsigned long currentMillis = 0;
 unsigned long lastMillis[AmountOfTimers] = {0};
-unsigned long defrostTimer = DEFROSTTIMERDEFAULT;
-double targetTemperature = 10, currentTemperature = 30, peltierPWM = 100;
+byte defrostTimer = DEFROSTTIMERDEFAULT;
+float targetTemperature = 10, currentTemperature = 30, peltierPWM = 100;
 byte fanPWM = 0;
 bool writeROM = false, dimOLED = false;
 
 byte lastButtonState = 0;
 unsigned int delayTillNextChange = BTNHOLDSTARTSPEED;
 
-
-OLED screen(BOOTSCREENTEXT);
-Buttons buttons(NEGBTNPIN, POSBTNPIN, BTNDEBOUNCE);
+OLED screen(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+Buttons buttons(BTNDEBOUNCE);
 Fan fan(FANSENS, FANPWM, FANSENSTIMEOUT);
 Temperature thermistor(TEMPPIN, TEMPSMOOTHING, TEMPRESISTOR, TEMPTHERMISTORNOMINAL, TEMPERATURENOMINAL, BCOEFFICIENT);
 TECController peltier(MOSPIN);
@@ -32,6 +32,11 @@ void setup()
 {
   loadEEPROMValues();
 
+  screen.start(BOOTSCREENTEXT);
+  buttons.setupButtons(NEGBTNPIN, POSBTNPIN);
+  fan.start();
+  thermistor.start();
+  peltier.start();
   pidController.setBangBang(4);
 
   fan.setFanSpeed(fanPWM);
@@ -40,28 +45,29 @@ void setup()
 void loop()
 {
   // get current time to use with every timer
-  unsigned long currentMillis = millis();
+  currentMillis = millis();
 
-  resetTimers(currentMillis);
+  resetTimers();
+  int8_t changeCurrentSetting = readButtons();
 
-  int8_t changeCurrentSetting = readButtons(currentMillis);
+  changeSettings(changeCurrentSetting);
 
-  changeSettings(changeCurrentSetting, currentMillis);
+  update();
 
-  update(currentMillis);
+  setScreenLightMode();
 
-  setScreenLightMode(currentMillis);
-
-  saveEEPROMValues(currentMillis);
+  saveEEPROMValues();
 }
 
 // checks if the timers need to be reset because millis() has rolled over
-void resetTimers(unsigned long currentMillis)
+void resetTimers()
 {
   for (byte i = 0; i < AmountOfTimers; i++)
   {
     if (currentMillis < lastMillis[i])
+    {
       lastMillis[i] = currentMillis;
+    }
   }
 }
 
@@ -85,14 +91,14 @@ void loadEEPROMValues()
   }
 }
 
-void saveEEPROMValues(unsigned long currentMillis)
+void saveEEPROMValues()
 {
   // check if it is time to save new values to EEPROM
-  if (lastMillis[EEPROMTimer] != 0 && currentMillis - lastMillis[EEPROMTimer] > EEPROMWRITE)
+  if (lastMillis[SettingChangeTimer] != 0 && currentMillis - lastMillis[SettingChangeTimer] > EEPROMWRITE)
   {
     EEPROM.put(ROMTEMP, targetTemperature);
     EEPROM.put(ROMFANPWM, fanPWM);
-    lastMillis[EEPROMTimer] = 0;
+    lastMillis[SettingChangeTimer] = 0;
     if (mode != Defrost)
     {
       mode = Information;
@@ -101,7 +107,7 @@ void saveEEPROMValues(unsigned long currentMillis)
 }
 
 // handles the button presses
-int8_t readButtons(unsigned long currentMillis)
+int8_t readButtons()
 {
   int8_t changeCurrentSetting = 0;
   byte currentButtonState = buttons.getStatus(currentMillis);
@@ -134,7 +140,8 @@ int8_t readButtons(unsigned long currentMillis)
         mode = Mode(int(mode) + 1);
       }
 
-      if (mode == Defrost) {
+      if (mode == Defrost)
+      {
         defrostTimer = DEFROSTTIMERDEFAULT;
       }
       break;
@@ -180,7 +187,7 @@ int8_t readButtons(unsigned long currentMillis)
 }
 
 // changes settings based on what the current mode is
-void changeSettings(int8_t changeCurrentSetting, unsigned long currentMillis)
+void changeSettings(int8_t changeCurrentSetting)
 {
   if (changeCurrentSetting != 0 && mode > 1)
   {
@@ -203,12 +210,12 @@ void changeSettings(int8_t changeCurrentSetting, unsigned long currentMillis)
       break;
     }
 
-    lastMillis[EEPROMTimer] = currentMillis;
+    lastMillis[SettingChangeTimer] = currentMillis;
   }
 }
 
 // handles the dimming and turning off the screen
-void setScreenLightMode(unsigned long currentMillis)
+void setScreenLightMode()
 {
   // check if it is time to turn of the screen
   if (mode != ScreenOff && mode != Defrost)
@@ -226,14 +233,14 @@ void setScreenLightMode(unsigned long currentMillis)
 }
 
 // handles the updating of the readings and screen
-void update(unsigned long currentMillis)
+void update()
 {
-
   // check if it is time to update
   if (currentMillis - lastMillis[UpdateTimer] > UPDATEINTERVAL)
   {
     currentTemperature = thermistor.getTemperature();
-    screen.update(mode, dimOLED, currentTemperature, targetTemperature, fan.getFanRPM(), fanPWM, defrostTimer);
+    int fanRPM = fan.getFanRPM();
+    screen.update(mode, dimOLED, currentTemperature, targetTemperature, &fanRPM, fanPWM, defrostTimer);
     if (mode == Defrost)
     {
       peltier.setPWM(0);
@@ -242,7 +249,6 @@ void update(unsigned long currentMillis)
         defrostTimer--;
         lastMillis[DefrostTimer] = currentMillis;
       }
-      
     }
     else
     {

@@ -8,7 +8,7 @@ enum buttonPressed {none, negative, positive, both};
 class Buttons
 {
 private:
-    unsigned int debounceTime;
+    unsigned int debounceTime = 50;
 
     enum button {negButton, posButton};
 
@@ -18,12 +18,11 @@ private:
     bool lastButtonState[2] = {0};
     unsigned long lastDebounceTime[2] = {0};
 
-    void setupButtons(char negButtonPin, char posButtonPin);
+    
     void readButton(byte buttonIndex, unsigned long currentMillis);
 public:
-    Buttons(char negButtonPin, char posButtonPin, int debounceTime);
-    Buttons(char negButtonPin, char posButtonPin);
-
+    Buttons(int debounceTime);
+    void setupButtons(char negButtonPin, char posButtonPin);
     byte getStatus(unsigned long currentMillis);
 };
 

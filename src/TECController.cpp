@@ -5,7 +5,12 @@
 TECController::TECController(char mosFetPin)
 {
     this->mosFetPin = mosFetPin;
-    pinMode(MOSPIN, OUTPUT);
+
+}
+
+void TECController::start() 
+{
+        pinMode(MOSPIN, OUTPUT);
 
     // reset timer settings
     TCCR1A = 0;

@@ -1,8 +1,8 @@
 #ifndef __DEFINES_H__
 #define __DEFINES_H__
 
-#define MINUTETOMS(x) x * 60000 // convert minutes to milliseconds
-#define SECONDTOMS(x) x * 1000  // convert seconds to milliseconds
+#define MINUTETOMS(x) (x * 60000) // convert minutes to milliseconds
+#define SECONDTOMS(x) (x * 1000)  // convert seconds to milliseconds
 
 // Pin Configuration
 #define FANSENS 2   // D2 = FAN RPM input can't be changed, as it is used with interupt0

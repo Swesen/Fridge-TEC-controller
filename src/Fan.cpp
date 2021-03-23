@@ -6,7 +6,10 @@ Fan::Fan(char fanSensPin, char fanPWMPin, unsigned long fanSensTimeOut)
     this->fanSensPin = fanSensPin;
     this->fanPWMPin = fanPWMPin;
     this->fanSensTimeOut = fanSensTimeOut;
+}
 
+void Fan::start()
+{
     pinMode(fanPWMPin, OUTPUT);
     pinMode(fanSensPin, INPUT_PULLUP);
     setupTimer2();
@@ -18,7 +21,7 @@ int Fan::getFanRPM()
     return 1000000 * 60 / pulseIn(fanSensPin, HIGH, fanSensTimeOut) * 4;
 }
 
-void Fan::setFanSpeed(float percent) 
+void Fan::setFanSpeed(float percent)
 {
     // convert percentage to PWM timer equivilent
     OCR2B = (byte)(79 / percent + 0.5);

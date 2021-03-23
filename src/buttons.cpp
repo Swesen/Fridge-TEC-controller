@@ -1,19 +1,10 @@
 #include <Arduino.h>
 #include "Buttons.h"
 
-Buttons::Buttons(char negButtonPin, char posButtonPin, int debounceTime)
+Buttons::Buttons(int debounceTime)
 {
     // time in milliseconds that the button needs to be in a new state to change virtual state
     this->debounceTime = debounceTime;
-
-    setupButtons(negButtonPin, posButtonPin);
-}
-
-Buttons::Buttons(char negButtonPin, char posButtonPin)
-{
-    debounceTime = 50;
-
-    setupButtons(negButtonPin, posButtonPin);
 }
 
 void Buttons::setupButtons(char negButtonPin, char posButtonPin)

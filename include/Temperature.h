@@ -22,6 +22,7 @@ public:
     Temperature(char thermistorPin, byte smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient);
     ~Temperature();
 
+    void start();
     float getTemperature();
 };
 #endif // __TEMPERATURE_H__

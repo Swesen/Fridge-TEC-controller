@@ -9,6 +9,7 @@ public:
     // mosFetPin needs to be D9
     TECController(char mosFetPin);
 
+    void start();
     void setPWM(float percentage);
 };
 
