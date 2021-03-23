@@ -15,17 +15,17 @@ private:
 
     Adafruit_SSD1306 display;
 
-    void printCurrentTemp(char currentTemperature, char textSize);
-    void printSetTemp(char setTemperature, bool selected);
+    void printCurrentTemp(double currentTemperature, byte textSize);
+    void printSetTemp(double setTemperature, bool selected);
     void printFanInfo(int *fanSpeed, byte fanPWM, bool selected);
-    void printMosStatus();
+    void printMosStatus(byte peltierPWM);
     void printDefrostInfo(byte defrostTimer);
 
 public:
     OLED(uint8_t w, uint8_t h, TwoWire *twi, int8_t rst_pin);
 
     void start(String bootText);
-    void update(Mode mode, bool dimOLED, char currentTemperature, char setTemperature, int *fanSpeed, byte fanPWM, byte defrostTimer);
+    void update(Mode mode, bool dimOLED, double currentTemperature, double setTemperature, int *fanSpeed, byte fanPWM, byte peltierPWM, byte defrostTimer);
     void print(String text);
     void clear();
 };

@@ -15,7 +15,7 @@
         
         void start();
         int getFanRPM();
-        void setFanSpeed(float percent);
+        void setFanSpeed(double percentage);
     };
 
 #endif // __FAN_H__

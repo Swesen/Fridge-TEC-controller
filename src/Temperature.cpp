@@ -4,7 +4,7 @@
 
 // internal variables
 
-Temperature::Temperature(char thermistorPin, byte smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient)
+Temperature::Temperature(uint8_t thermistorPin, byte smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient)
 {
     this->thermistorPin = thermistorPin;
     this->smoothing = smoothing;
@@ -15,8 +15,6 @@ Temperature::Temperature(char thermistorPin, byte smoothing, unsigned int resist
 
     // allocate memory for multiple samples
     samples = (int *)calloc(smoothing, sizeof(int));
-
-
 }
 
 Temperature::~Temperature()
@@ -24,18 +22,18 @@ Temperature::~Temperature()
     free(samples);
 }
 
-void Temperature::start() 
+void Temperature::start()
 {
-        pinMode(thermistorPin, INPUT);
+    pinMode(A1, INPUT);
 }
 
-float Temperature::getTemperature()
+double Temperature::getTemperature()
 {
     // tage a new reading and add to samples
-    samples[currentIndex] = analogRead(thermistorPin);
+    samples[currentIndex] = analogRead(A1);
 
     // make sure the next index is within range
-    if (currentIndex >= smoothing)
+    if (currentIndex >= smoothing - 1)
     {
         currentIndex = 0;
     }
@@ -45,7 +43,7 @@ float Temperature::getTemperature()
     }
 
     // average all the samples out
-    float average = 0;
+    double average = 0;
     for (int i = 0; i < smoothing; i++)
     {
         average += samples[i];
@@ -53,8 +51,16 @@ float Temperature::getTemperature()
     average /= smoothing;
 
     // convert the value to resistance
-    average = resistorValue / (1024 / average + 1);
+    average = resistorValue / (1024 / (average));
 
     // convert the readings into celsius
-    return 1.0 / (log(average / nominalThermistorResistance) / betaCoefficient + (1.0 / (nominalTemperature + 273.15))) - 273.15;
+    double steinhart;
+    steinhart = average / nominalThermistorResistance; // (R/Ro)
+    steinhart = log(steinhart);                        // ln(R/Ro)
+    steinhart /= betaCoefficient;                      // 1/B * ln(R/Ro)
+    steinhart += 1.0 / (nominalTemperature + 273.15);  // + (1/To)
+    steinhart = 1.0 / steinhart;                       // Invert
+    steinhart -= 273.15;
+
+    return steinhart;
 }

@@ -4,7 +4,7 @@
 class Temperature
 {
 private:
-    char thermistorPin;
+    uint8_t thermistorPin;
     int currentIndex = 0;
     int *samples;
     byte smoothing;
@@ -19,10 +19,10 @@ private:
     int betaCoefficient;
 
 public:
-    Temperature(char thermistorPin, byte smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient);
+    Temperature(uint8_t thermistorPin, byte smoothing, unsigned int resistorValue, unsigned int nominalThermistorResistance, int nominalTemperature, int betaCoefficient);
     ~Temperature();
 
     void start();
-    float getTemperature();
+    double getTemperature();
 };
 #endif // __TEMPERATURE_H__

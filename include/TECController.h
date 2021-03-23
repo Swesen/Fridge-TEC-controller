@@ -10,7 +10,7 @@ public:
     TECController(char mosFetPin);
 
     void start();
-    void setPWM(float percentage);
+    void setPWM(double percentage);
 };
 
 #endif // __TECCONTROLLER_H__

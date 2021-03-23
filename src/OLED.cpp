@@ -23,7 +23,7 @@ void OLED::start(String bootText)
     display.clearDisplay();
 }
 
-void OLED::update(Mode mode, bool dimOLED, char currentTemperature, char setTemperature, int *fanSpeed, byte fanPWM, byte defrostTimer)
+void OLED::update(Mode mode, bool dimOLED, double currentTemperature, double setTemperature, int *fanSpeed, byte fanPWM, byte peltierPWM, byte defrostTimer)
 {
     int tempSize = 1;
     bool tempSelected = false;
@@ -38,6 +38,10 @@ void OLED::update(Mode mode, bool dimOLED, char currentTemperature, char setTemp
     // check which mode to show on the oled
     switch (mode)
     {
+    case ScreenOff:
+        display.display();
+        return;
+        
     case Information:
         tempSize = 3;
         break;
@@ -71,7 +75,7 @@ void OLED::update(Mode mode, bool dimOLED, char currentTemperature, char setTemp
     }
     else
     {
-        printMosStatus();
+        printMosStatus(peltierPWM);
     }
 
     // display button info on screen for modes with settings
@@ -102,7 +106,7 @@ void OLED::clear()
     display.setCursor(0, 0);
 }
 
-void OLED::printCurrentTemp(char currentTemperature, char textSize)
+void OLED::printCurrentTemp(double currentTemperature, byte textSize)
 {
     display.setTextColor(1);
     display.setTextSize(textSize);
@@ -111,14 +115,15 @@ void OLED::printCurrentTemp(char currentTemperature, char textSize)
     display.println("C");
 }
 
-void OLED::printSetTemp(char setTemperature, bool selected)
+void OLED::printSetTemp(double setTemperature, bool selected)
 {
+    display.setTextSize(1);
     if (selected)
     {
         display.setTextColor(0, 1);
+        display.setTextSize(2);
     }
 
-    display.setTextSize(2);
     display.print("Set:");
     display.print(setTemperature, 1);
     display.print((char)247);
@@ -142,12 +147,12 @@ void OLED::printFanInfo(int *fanSpeed, byte fanPWM, bool selected)
     display.println("%");
 }
 
-void OLED::printMosStatus()
+void OLED::printMosStatus(byte peltierPWM)
 {
     display.setTextColor(1);
     display.setTextSize(1);
     display.print("Mos:");
-    display.print(OCR1A);
+    display.print(peltierPWM);
     display.println("%");
 }
 

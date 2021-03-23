@@ -18,13 +18,13 @@ void Fan::start()
 int Fan::getFanRPM()
 {
     // convert the time between signal pulses to RPM
-    return 1000000 * 60 / pulseIn(fanSensPin, HIGH, fanSensTimeOut) * 4;
+    return 1000000 * 60 / (pulseIn(fanSensPin, HIGH, fanSensTimeOut) * 4);
 }
 
-void Fan::setFanSpeed(float percent)
+void Fan::setFanSpeed(double percentage)
 {
     // convert percentage to PWM timer equivilent
-    OCR2B = (byte)(79 / percent + 0.5);
+    OCR2B = round(79 * (percentage / 100));
 }
 
 void Fan::setupTimer2()

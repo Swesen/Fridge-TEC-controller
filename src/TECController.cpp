@@ -5,12 +5,11 @@
 TECController::TECController(char mosFetPin)
 {
     this->mosFetPin = mosFetPin;
-
 }
 
-void TECController::start() 
+void TECController::start()
 {
-        pinMode(MOSPIN, OUTPUT);
+    pinMode(MOSPIN, OUTPUT);
 
     // reset timer settings
     TCCR1A = 0;
@@ -21,12 +20,11 @@ void TECController::start()
     TCCR1A |= (1 << COM1A1) | (1 << COM1B1) | (1 << WGM10);
     TCCR1B |= (1 << WGM12) | (1 << CS10);
 
-    OCR1A = 254;
+    OCR1A = 255;
 }
 
-
-void TECController::setPWM(float percentage)
+void TECController::setPWM(double percentage)
 {
     // convert percentage to PWM equivilent
-    OCR1A = (byte)(254 / percentage + 0.5);
+    OCR1A = round(255 * (percentage / 100));
 }

@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
-#include <AutoPID.h>
+#include <PID_v1.h>
 #include "main.h"
 #include "Fan.h"
 #include "OLED.h"
@@ -14,7 +14,7 @@ Mode mode = Information;
 unsigned long currentMillis = 0;
 unsigned long lastMillis[AmountOfTimers] = {0};
 byte defrostTimer = DEFROSTTIMERDEFAULT;
-float targetTemperature = 10, currentTemperature = 30, peltierPWM = 100;
+double targetTemperature = 10, currentTemperature = 30, peltierPWM = 100;
 byte fanPWM = 0;
 bool writeROM = false, dimOLED = false;
 
@@ -26,7 +26,7 @@ Buttons buttons(BTNDEBOUNCE);
 Fan fan(FANSENS, FANPWM, FANSENSTIMEOUT);
 Temperature thermistor(TEMPPIN, TEMPSMOOTHING, TEMPRESISTOR, TEMPTHERMISTORNOMINAL, TEMPERATURENOMINAL, BCOEFFICIENT);
 TECController peltier(MOSPIN);
-AutoPID pidController(&currentTemperature, &targetTemperature, &peltierPWM, 0, 100, KP, KI, KD);
+PID pidController(&currentTemperature, &peltierPWM, &targetTemperature, KP, KI, KD, REVERSE);
 
 void setup()
 {
@@ -37,7 +37,8 @@ void setup()
   fan.start();
   thermistor.start();
   peltier.start();
-  pidController.setBangBang(4);
+  pidController.SetMode(AUTOMATIC);
+  pidController.SetOutputLimits(0, 100);
 
   fan.setFanSpeed(fanPWM);
 }
@@ -239,8 +240,11 @@ void update()
   if (currentMillis - lastMillis[UpdateTimer] > UPDATEINTERVAL)
   {
     currentTemperature = thermistor.getTemperature();
+
     int fanRPM = fan.getFanRPM();
-    screen.update(mode, dimOLED, currentTemperature, targetTemperature, &fanRPM, fanPWM, defrostTimer);
+    // screen.clear();
+    // screen.print("OK");
+    screen.update(mode, dimOLED, currentTemperature, targetTemperature, &fanRPM, fanPWM, peltierPWM, defrostTimer);
     if (mode == Defrost)
     {
       peltier.setPWM(0);
@@ -252,7 +256,8 @@ void update()
     }
     else
     {
-      pidController.run();
+      pidController.Compute();
+
       peltier.setPWM(peltierPWM);
     }
 
