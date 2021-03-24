@@ -18,7 +18,7 @@
 #define OLEDSCL A5    // A5 = DISPLAY SCL can't be changed, the only dedicated SCL pin
 
 // Settings Configuration
-#define UPDATEINTERVAL 1000 // ms between updates of OLED, temperature, fan speed etc.
+#define UPDATEINTERVAL 500 // ms between updates of OLED, temperature, fan speed etc.
 #define DEFROSTTIMERDEFAULT 15
 // OLED
 #define SCREEN_WIDTH 128              // OLED display width, in pixels

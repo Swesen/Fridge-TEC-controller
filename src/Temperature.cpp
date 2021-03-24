@@ -25,12 +25,16 @@ Temperature::~Temperature()
 void Temperature::start()
 {
     pinMode(A1, INPUT);
+    for (int i = 0; i < smoothing; i++)
+    {
+        samples[i]  = analogRead(thermistorPin);;
+    }
 }
 
 double Temperature::getTemperature()
 {
     // tage a new reading and add to samples
-    samples[currentIndex] = analogRead(A1);
+    samples[currentIndex] = analogRead(thermistorPin);
 
     // make sure the next index is within range
     if (currentIndex >= smoothing - 1)

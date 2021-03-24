@@ -41,7 +41,7 @@ void OLED::update(Mode mode, bool dimOLED, double currentTemperature, double set
     case ScreenOff:
         display.display();
         return;
-        
+
     case Information:
         tempSize = 3;
         break;
@@ -140,9 +140,9 @@ void OLED::printFanInfo(int *fanSpeed, byte fanPWM, bool selected)
     if (selected)
     {
         display.setTextColor(0, 1);
-        display.setTextSize(2);
+        display.setTextSize(1);
     }
-    display.print("RPM  ");
+    display.print("RPM ");
     display.print(fanPWM);
     display.println("%");
 }
