@@ -13,7 +13,7 @@ class OLED
 private:
     byte dropCycle = 0;
 
-    Adafruit_SSD1306 display;
+    
 
     void printCurrentTemp(double currentTemperature, byte textSize);
     void printSetTemp(double setTemperature, bool selected);
@@ -22,6 +22,7 @@ private:
     void printDefrostInfo(byte defrostTimer);
 
 public:
+Adafruit_SSD1306 display;
     OLED(uint8_t w, uint8_t h, TwoWire *twi, int8_t rst_pin);
 
     void start(String bootText);

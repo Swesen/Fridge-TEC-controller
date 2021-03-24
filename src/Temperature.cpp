@@ -51,7 +51,7 @@ double Temperature::getTemperature()
     average /= smoothing;
 
     // convert the value to resistance
-    average = resistorValue / (1024 / (average));
+    average = resistorValue / (1023 / average - 1);
 
     // convert the readings into celsius
     double steinhart;

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "Buttons.h"
+#include "OLED.h" // debug
 
 Buttons::Buttons(int debounceTime)
 {
@@ -32,18 +33,18 @@ byte Buttons::getStatus(unsigned long currentMillis)
     readButton(posButton, currentMillis);
 
     // check to see if any button is pressed
-    if (!lastButtonState[negButton] || !lastButtonState[posButton])
+    if (buttonState[negButton] || buttonState[posButton])
     {
-        if (!lastButtonState[negButton] && !lastButtonState[posButton])
+        if (buttonState[negButton] && buttonState[posButton])
         {   
             // both buttons pressed
             return both;
-        }else if (!lastButtonState[posButton])
+        }else if (buttonState[posButton])
         {
             // positive button pressed
             return positive;
         }
-        else if (!lastButtonState[negButton])
+        else if (buttonState[negButton])
         {
             // negative button pressed
             return negative;
@@ -55,22 +56,24 @@ byte Buttons::getStatus(unsigned long currentMillis)
 
 void Buttons::readButton(byte buttonIndex, unsigned long currentMillis)
 {
-    buttonState[buttonIndex] = bool(digitalRead(buttonPin[buttonIndex]));
+    // since buttons use pull up resistors it is inverted
+    bool currentButtonState = !digitalRead(buttonPin[buttonIndex]);
 
     // check if the button status is different to last time
-    if (buttonState[buttonIndex] != lastButtonState[buttonIndex])
+    if (currentButtonState != lastButtonState[buttonIndex])
     {
         // reset debounce timer
-        lastButtonState[buttonIndex] = currentMillis;
+        lastDebounceTime[buttonIndex] = currentMillis;
+        lastButtonState[buttonIndex] = currentButtonState;
 
     } // check that debounceTime has passed since last change
-    else if (((currentMillis - lastButtonState[buttonIndex]) > debounceTime))
+    else if ((currentMillis - lastDebounceTime[buttonIndex]) > debounceTime)
     {
         // check that the state has changed
         if (buttonState[buttonIndex] != lastButtonState[buttonIndex])
         {
             // update button state
-            lastButtonState[buttonIndex] = buttonState[buttonIndex];
+            buttonState[buttonIndex] = lastButtonState[buttonIndex];
         }
     }
 }

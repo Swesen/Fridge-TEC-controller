@@ -14,7 +14,7 @@ private:
 
     // index 0 = negative, 1 = positive
     char buttonPin[2] = {0};
-    bool buttonState[2] = {0};
+    bool buttonState[2] = {0}; // debounced button state
     bool lastButtonState[2] = {0};
     unsigned long lastDebounceTime[2] = {0};
 
